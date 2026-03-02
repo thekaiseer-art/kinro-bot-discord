@@ -12,11 +12,11 @@ class Ping(commands.Cog):
     async def ping_text(self, ctx: commands.Context):
         await ctx.send(f"Pong! {round(self.bot.latency * 1000)}ms")
 
-    # Comando slash
+    # Comando slash (aparecerá instantaneamente no seu servidor de teste)
     @discord.slash_command(name="ping", description="Responde com Pong!")
     async def ping_slash(self, interaction: discord.Interaction):
         await interaction.response.send_message(f"Pong! {round(self.bot.latency * 1000)}ms")
 
-# Setup moderno
+# Função setup moderna
 async def setup(bot: commands.Bot):
     await bot.add_cog(Ping(bot))

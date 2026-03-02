@@ -1,38 +1,29 @@
 import discord
 from discord.ext import commands
-import asyncio
 import os
 
-# Pega o token do Railway (ou outra variável de ambiente)
-TOKEN = os.environ.get("DISCORD_TOKEN")
-if not TOKEN:
-    raise ValueError("❌ Variável de ambiente DISCORD_TOKEN não encontrada!")
-
-# Intents necessários
 intents = discord.Intents.default()
-intents.message_content = True  # Para comandos de texto
-intents.guilds = True           # Para slash commands
-
+intents.message_content = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
-# Carrega todos os cogs automaticamente
-async def load_cogs():
-    for root, dirs, files in os.walk("./cogs"):
-        for file in files:
-            if file.endswith(".py"):
-                path = os.path.join(root, file).replace("\\", ".").replace("/", ".")[:-3]
-                try:
-                    await bot.load_extension(path)
-                    print(f"✅ Cog carregado: {path}")
-                except Exception as e:
-                    print(f"❌ Erro ao carregar {path}: {e}")
+# Lista de cogs para carregar
+initial_extensions = [
+    "cogs.fun.ping",        # ping.py
+    "cogs.fun",             # pasta fun/__init__.py
+    "cogs.moderation",      # pasta moderation/__init__.py
+    "cogs.util"             # pasta util/__init__.py
+]
+
+for ext in initial_extensions:
+    try:
+        bot.load_extension(ext)
+        print(f"✅ Cog {ext} carregada com sucesso")
+    except Exception as e:
+        print(f"❌ Erro ao carregar {ext}: {e}")
 
 @bot.event
 async def on_ready():
-    print(f"✅ Bot online: {bot.user}")
+    print(f"Bot online: {bot.user}")
 
-async def main():
-    await load_cogs()
-    await bot.start(TOKEN)
-
-asyncio.run(main())
+TOKEN = os.environ.get("DISCORD_TOKEN")
+bot.run(TOKEN)
